@@ -1,12 +1,17 @@
-// This is a mock LLM interface. In the future, this will query a real LLM API.
-// For now, it returns a hard-coded suggestion.
+// src/llm_interface/mock_llm.js
 
 function getSuggestedCodeChange(requestDescription) {
-    // requestDescription: A string describing what the developer wants.
-    // Returns an object with a proposed code snippet.
+    // Generate a code snippet that matches the requested description.
+    // For example, "Add a user route" becomes a route '/add-a-user-route'.
+    const routeName = requestDescription.toLowerCase().replace(/\s+/g, '-');
+    const snippet = `// Proposed code for: ${requestDescription}
+  app.get('/${routeName}', (req, res) => {
+    res.send('This is the ${requestDescription} feature.');
+  });`;
+  
     return {
       description: requestDescription,
-      codeSnippet: "// TODO: Add a new Express route here.\napp.get('/new-feature', (req, res) => { res.send('New Feature'); });"
+      codeSnippet: snippet
     };
   }
   
