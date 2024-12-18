@@ -1,0 +1,18 @@
+{
+  "name": "llmforge",
+  "version": "1.0.0",
+  "description": "LLMForge is a next-generation development framework that pairs a Large Language Model (LLM) with a human-in-the-loop approval process to produce secure, reliable, and quickly developed web applications.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
