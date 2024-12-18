@@ -1,13 +1,24 @@
-// src/server/server.js
-
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const { getSuggestedCodeChange } = require('../llm_interface/mock_llm');
 const { stageCodeChange, approveChange } = require('../approval_workflow/staging');
 
 const app = express();
-app.use(express.json()); // parse JSON request bodies
+app.use(express.json());
 
 const port = process.env.PORT || 3000;
+
+// Dynamically load all generated routes
+const generatedRoutesDir = path.join(__dirname, 'routes', 'generated');
+if (fs.existsSync(generatedRoutesDir)) {
+  const routeFiles = fs.readdirSync(generatedRoutesDir).filter(file => file.endsWith('.js'));
+  for (const file of routeFiles) {
+    const routeModule = require(path.join(generatedRoutesDir, file));
+    // routeModule is a function that takes (app) and registers the route
+    routeModule(app);
+  }
+}
 
 // Health check
 app.get('/', (req, res) => {
@@ -31,17 +42,16 @@ app.post('/approve/:id', (req, res) => {
   const { id } = req.params;
   const success = approveChange(parseInt(id, 10));
   if (success) {
-    return res.json({ message: `Change #${id} approved` });
+    return res.json({ message: `Change #${id} approved. Restart the server to load the new route.` });
   } else {
     return res.status(404).json({ error: 'No such staged change' });
   }
 });
 
-// Only start the server if not in test mode
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
     console.log(`LLMForge server is listening on port ${port}`);
   });
 }
 
-module.exports = app; // Export the app for testing
+module.exports = app;
